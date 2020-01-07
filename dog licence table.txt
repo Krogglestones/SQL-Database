@@ -1,0 +1,67 @@
+Dog License assignment (insert, update, delete)
+
+EXTRA CREDIT:
+CREATE TABLE COMMAND: 
+create table DogLicense (
+	License varchar(10) Primary Key,
+	Expires date not null check (expires >= '01/01/1990'),
+	Sex varchar(2) not null check (sex='M' or sex='F' or sex='NM' or sex='SF'),
+	PetName varchar(30),
+	Breed varchar(20),
+	OwnerLastName varchar(30) not null,
+	OwnerFirstName varchar(30),
+	HomeAddress varchar(40) not null,
+	City varchar(30) default 'Spokane',
+	TheState varchar(2) default 'WA',
+	Zip varchar(5) check (zip='99201' or zip='99202' or zip='99203' or zip='99204' or zip='99205' or zip='99206' or zip='99207' or zip='99208' or zip='99209' or zip='99210' or zip='99211' or zip='99212'),
+	Phone varchar(10),
+	Fee int not null,
+	AggressiveDog varchar(1) default 'F' check(AggressiveDog='T' or AggressiveDog='F'),
+)
+
+1)  insert DogLicense values('OU812YUP', '04/20/2018', 'M', 'Benji', 'Terrier', 'Clifton', 'Jon', '2334 W. Doolittle', 'NineMile', 'WA', '99211','5093445677', 40, 'T')
+	insert DogLicense values ('Balls187','07/04/2020','M','Chopper','Sheepdog','Gleese','Justin','1223 E. Park','Spokane','WA','99208','5094110911',4,'T')
+	insert DogLicense values ('Dogtag111','05/03/2020','NM','Rowdy','Wiener','Adler','Cassie','1233 W. Park','Spokane','WA','99202','5096661870',13,'T')
+	insert DogLicense values('Stonerdog7','04/20/2025','F','Lexingtons Pooper','Lab/Healer','Woolsey','Wes','7633 N. Dakota','Spokane','WA','99207','5098448855',99,'F')
+	insert into DogLicense(License, Expires, Sex, PetName, Breed, OwnerLastName, HomeAddress, Fee, AggressiveDog) 
+	values ('Fluffy11', '02-02-2003', 'M', 'Congo', 'German Shepard', 'MacIntosh', '6814 N. Adams',55,'F')
+	insert into DogLicense(License, Expires, Sex, PetName, Breed, OwnerLastName, HomeAddress, Fee, AggressiveDog) 
+	values ('Rubydude', '06-18-2017', 'NM', 'Dave Jones', 'mix', 'Affholter', '123 N. Wherever', 650, 'F') 
+	
+	insert into DogLicense(License, Expires, Sex, PetName, Breed, OwnerLastName, HomeAddress, Fee, AggressiveDog) 
+	values ('Zelda555', '03-22-2033', 'SF', 'Maggie', 'Golden Retreiver', 'West', '7507 N Fox Point Dr.', 50, 'F')
+	insert into DogLicense(License, Expires, Sex, PetName, Breed, OwnerLastName, HomeAddress, Fee, AggressiveDog) 
+	values ('fartsalot', '04-25-2092', 'NM', 'Cassius', 'mutt', 'Anderson', '555 W Cleveland', 443, 'T')
+	
+	insert into DogLicense(License, Expires, Sex, PetName, Breed, OwnerLastName, HomeAddress, City, Zip, Fee, AggressiveDog)
+	values ('LegHumper', '03-03-2020', 'SF', 'Heidi', 'Irish Setter', 'Fisher', '6712 N Jefferson', 'Cheney', '99210', 33, 'T')
+
+	insert into DogLicense(License, Expires, Sex, PetName, Breed, OwnerLastName, HomeAddress, City, Zip, Fee, AggressiveDog) 
+	values ('OldMan222', '03-22-2015', 'M', 'Koda', 'Weiner', 'Juanita', '1234 W Hell', 'Hoboken', '99212', 419, 'T')
+
+2)  update DogLicense
+	set Phone = '5095559897'
+	where License = 'OldMan222'
+
+3)  delete from DogLicense
+	where OwnerLastName = 'Anderson'
+
+4)  update DogLicense
+	set City = 'Spokane Valley'
+
+5)  update DogLicense
+	set Fee = 50
+	where sex = 'M' or sex = 'F'
+
+	update DogLicense
+	set Fee = 25
+	where sex = 'NM' or sex = 'SF'
+
+6)  update DogLicense
+	set Fee = 35
+	where sex = 'NM' or sex = 'SF'
+
+7)  delete from DogLicense
+	where (AggressiveDog = 'T') and (Sex = 'M')
+
+8)  select * from DogLicense

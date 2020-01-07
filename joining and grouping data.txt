@@ -1,0 +1,115 @@
+Joining and Grouping Data
+
+1)  Perform an inner join on Players and Managers on PlayerID.   Include all fields in Players and all fields in Managers but PlayerID on PlayerID.  How many records are there?  Look over the data.  Change the join to a left join.  Look over the data results. How many records are there?  What is the difference?  Change the join back to an inner join.  
+	Inner Join:  3404 rows
+	Left Outer Join:  21555 rows
+	The difference is that the inner join only includes players who also managed while the left outer join included all players regardless of whether they’ve ever managed.
+	SELECT Players.*, Managers.*
+	FROM Players INNER JOIN
+	Managers ON Players.playerIDpk = Managers.playerID
+
+2)  Save the view as vwPlayerManagers.  With an inner join we will get only parents (players) with children (managers) – in other words, only managers.  Text the view 
+	create view vwPlayersManagers as
+	SELECT Players.*, Managers.*
+	FROM Players INNER JOIN
+	Managers ON Players.playerIDpk = Managers.playerID
+
+3)  Develop a SELECT to show each manager’s name, team and the number of games they managed that team overall. 
+	select nameLast LastName, nameFirst FirstName, teamID Team, sum(g) TotalGames
+	from vwPlayersManagers
+	group by nameLast, nameFirst, teamID
+	having sum(g) > 0
+
+4)  Provide the manager name, total wins and total losses for only managers with an overall winning record (total wins > total losses) 
+	select nameLast LastName, nameFirst FirstName, sum(w) TotalWins, sum(l) TotalLosses
+	from vwPlayersManagers
+	where w > l
+	group by nameLast, nameFirst
+	order by nameLast
+
+5)  In a single SELECT, which manager has the greatest number of wins? 
+	Connie Mack
+	
+	select players.playeridpk, players.namefirst,players.namelast,HiWins.TotalWins
+	from Players inner join (select playerid, sum(w) TotalWins from managers
+	group by playerID
+	having sum(w)=(select max(totalwins) GreatestWins from (
+	select playerid, sum(w) TotalWins from Managers
+	group by playerid) totalmgrwins))
+	HiWins on players.playerIDpk=HiWins.playerID
+
+6)  Write a SELECT to compare Wins of players that were also manager versus those that were never managers (you can use either the plyMgr or bPlyMger fields).  Does player experience seem to matter once you become a manager?  (5)
+	It does not matter.  The results show managers that didn’t play have about 14 more wins a year, on average.
+	select avg(w * 1.0) nonPlayers
+	from vwPlayersManagers
+	where plyrMgr = 'n'
+	select avg(w * 1.0) playerManagers
+	from vwPlayersManagers
+	where plyrMgr = 'y'
+
+7)  Who managed a single team the most seasons?  Provide a single SELECT to demonstrate. 
+	Connie Mack
+	select nameFirst 'First', nameLast 'Last', sum(g) TotalGames, teamID
+	from vwPlayersManagers
+	group by nameFirst, nameLast, teamID
+	having sum(g) >1
+	order by sum(g) desc
+
+8)  Who managed overall the most?  Provide a single SELECT to demonstrate. 
+	Connie Mack
+	select nameFirst 'First', nameLast 'Last', sum(g) TotalGames
+	from vwPlayersManagers
+	group by nameFirst, nameLast
+	having sum(g) >1
+	order by sum(g) desc
+
+9)  Which team had the most managers? 
+	Chicago Cubs
+	select teamid Team, count(distinct playeridpk) '# of Managers'
+	from vwPlayersManagers
+	group by teamID
+	having count(distinct playeridpk) > 0
+	order by count(distinct playeridpk) desc
+
+10)  Who was the shortest manager? 
+	Dickey Pierce and Cub Stricker – 63 inches
+	select height, namelast, namefirst
+	from vwPlayersManagers
+	where height = (select min(height) from vwPlayersManagers)
+	group by nameLast, nameFirst, height
+
+11)  How many managers were foreign born? 
+	46
+	select count(distinct playerIDpk) ForeignBornManagers
+	from vwPlayersManagers
+	where birthCountry != 'usa'
+
+12)  Inner Join Players to Batting.  Create a view vwPlayerBatting. 
+	create view vwPlayersBatting as
+	SELECT Players.*, Batting.*
+	FROM Players INNER JOIN
+	Batting ON Players.playerIDpk = Batting.playerID
+
+13)  Who hit the most home runs in history (single SELECT statement) 
+	Barry Bonds *
+	select nameLast LastName, nameFirst FirstName, sum(hr) TotalHomers
+	from vwPlayersBatting
+	group by playerIDpk, nameLast, nameFirst
+	having sum(hr) >0
+	order by sum(hr) desc
+
+14)  Provide a SELECT listing the most consistent home run hitters (average) that played (having) in at least 20 games in a season. 
+	select (sum (ab * 1.0)) / (sum (hr * 1.0)) AtBatPerHomer, namelast LastName, nameFirst Firstname
+	from vwPlayersBatting
+	where hr >0 
+	group by nameLast, nameFirst,playerIDpk,g
+	having g >= 20
+	order by (sum (ab * 1.0)) / (sum (hr * 1.0)) asc
+
+15)  Who had the most triples (B3) in history (single SELECT statement). 
+	Sam Crawford
+	select namelast, namefirst, sum(b3) Triples
+	from vwPlayersBatting
+	group by nameLast, nameFirst
+	having sum(b3) > 0
+	order by sum(b3) desc

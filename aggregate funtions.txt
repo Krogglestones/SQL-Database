@@ -1,0 +1,115 @@
+Aggregate Function Assignment
+
+1)   18846 
+
+       select count(playeridpk) playersQuantity from players
+
+2)  58
+
+    select count(playeridpk) PortlandORQuantitiy
+    from players
+    where birthState = 'OR' and birthCity = 'Portland'
+
+3)  46
+
+   select count(playeridpk) FatLeftyTexanQuantitiy
+   from players
+   where birthState = 'TX' and throws = 'L' and weight > 200
+
+4)  1736
+
+    select count(deathDate) DeathTotal
+    from players
+    where deathDate is not null and finalGameDate < '1/1/1900'
+
+5)  27
+
+    select count(birthState) BornAndDieInWA
+    from players
+    where birthState = 'WA' and deathState = 'WA'
+
+6)  Players: 28
+
+    Total Payroll:  $$86,510,000
+    Average Salary:  $$3,089,642.86
+    select count(salary) PlayerQuantity, sum(salary) TotalSalary, avg(salary) AvgSalary 
+    from Salaries
+    where yearID = 2010 and teamID= 'SEA'
+
+7)  31
+
+    select count(distinct yearID) YearsOfRecords
+    from Salaries   
+    where teamID = 'SEA'
+
+8)  1117
+
+    select count(idPK) SpokaneWADonations
+    from tblDonations
+    where city = 'Spokane' and state = 'WA'
+
+9)  548
+
+    select avg(don_amount) '99208_donations'
+    from tblDonations
+    where zip = '99208'
+
+10)  New York had more donations
+
+     select count(idpk) ‘NY_Donations’
+     from tblDonations
+     where city = 'New York' and state = 'NY'
+     select count(idpk)  ‘LA_Donations’
+     from tblDonations
+     where city = 'Los Angeles' and state = 'CA'
+
+11)  High: 108
+     Low:  -30
+
+     select max(RecHi) Highest_Ever, min(reclo) Lowest_Ever
+     from Spokane2012
+
+12)  48
+
+     select avg(mean) AvgDailyTemp
+     from Spokane2012
+
+13)  6:35:43 PM
+
+     SELECT DATEADD(SECOND, AVG( DATEDIFF( SECOND, 0, CAST(sunset as TIME) ) ), 0) AvgSunset
+     from Spokane2012
+
+14)  Earliest: 4:51 AM
+     Latest: 7:38 AM
+
+     select min(Sunrise) EarliestSunrise, max(Sunrise) LatestSunrise
+     from Spokane2012
+
+15)  7
+
+     select count(RecLo) as '1888_Record_Lows'
+     from Spokane2012
+     where RecLoYr = 1888
+
+16)  2010
+
+     select max(RecHiYr) as 'Latest_Record_High'
+     from Spokane2012
+
+17)  ID: hernafe02 
+
+     select playerID from Salaries
+     where salary = (select max(Salary) biggestSalary
+     from Salaries
+     where teamID = 'SEA' and yearID = '2012') and teamID ='SEA'
+
+18)  877 of them
+
+     select nameFirst, nameLast
+     from Players
+     where weight = (select avg(weight)
+     from Players) and deathDate is null
+
+19)  Foreign Players weigh more.
+
+     (select avg(weight * 1.0) AvgForeignWeight from Players where birthCountry != 'USA') - (select avg(weight * 1.0)      AvgAmericanWeight from Players where birthCountry = 'USA')

@@ -1,0 +1,10 @@
+create table CoinCollection
+(
+  coinID int identity (1001,1) Primary Key,
+  CoinType varchar(2) default 'P' check (CoinType='P' or CoinType='N' or CoinType='D' or CoinType='Q' or CoinType='HD' or CoinType='D') not null,
+  CoinYear varchar(4) not null,
+  Mint varchar(2) check (mint='CC' or mint='D' or mint='P' or mint='S' or mint='O') not null,
+  Coinvalue float,
+  condition varchar(2) check (condition='P' or condition='BU' or condition='UC' or condition='VF' or condition='F' or condition='G' or condition='P'),
+  AppraisalDate date
+)

@@ -1,0 +1,60 @@
+SQL Grouping Exercise
+
+1.	Total lifetime batting history (all batting table data) for all players returned in player name order (hint: simple SELECT from view). 
+
+	select * from vwPlayersBatting
+
+2.	Hall of fame homerun hitters that hit 500 or more homeruns in their life.  Include their name and number of home runs.  Because there might be duplicate names, I suggest you group by playerID and name.
+
+	select playeridpk ID, namelast LastName, nameFirst FirstName, sum(hr) Homers
+	from vwPlayersBatting
+	group by playerIDpk, nameLast, nameFirst
+	having sum(hr) >= 500
+
+3.	As long as we are at it (previous question), how many and which players have the same first and last names?   For example:
+
+You will need only the Players table. Exclude unique names – include only those with 2 or more matches (Having)
+
+	select  namelast LastName, nameFirst FirstName, count(namelast) '# ofThem'
+	from Players
+	group by nameLast, nameFirst
+	having (count(nameLast) >=2) and (count(namefirst) >=2)
+	order by nameLast
+
+4.	The average player weight and height by teams during the year 1987.
+
+	select teamid team, avg(weight) AverageWeight, avg(height) AverageHeight
+	from vwPlayersBatting
+	where yearID = 1987
+	group by teamID
+	order by teamID
+
+5.	What are the top 5 Teams with the greatest average weight (display the team and weight).  TOP is acceptable here.
+
+	select top 5 avg(weight) AvgWeight, teamid
+	from vwPlayersBatting
+	group by teamid
+	order by AvgWeight desc
+
+6.	Compare the average weight and height of the Mariners (SEA) for each year they played.  Include the year, average weight and average height in year order.
+
+	select yearid 'Year', avg(weight) AvgWeight, avg(height) AvgHeight
+	from vwPlayersBatting
+	where teamID = 'sea'
+	group by yearID
+	order by yearID desc
+
+7.	Compare the total homeruns hit by year for all teams in team then year order
+
+	select teamid Team, yearID 'Year', sum(hr) Homers 
+	from vwPlayersBatting
+	group by teamID, yearID
+	order by teamID, yearID desc
+
+8.	Which (if any) current batters (no finale) that weigh less than 180 pounds, hit more than 20 home runs in any given year.  Return the name and number of home runs ordered by the most homeruns to the least.
+
+	select yearID, nameFirst 'First', nameLast 'Last', sum(hr) Homers
+	from vwPlayersBatting
+	where (hr > 20) and (weight < 180) and (finalGameDate >= '2015-10-04')
+	group by yearID, nameFirst, nameLast, hr
+	order by hr desc

@@ -1,0 +1,74 @@
+MLB Database query final
+
+MAIN BODY:
+
+	select (NameFirst +' '+ NameLast) as 'Name',g GP, AB, R, H, B2 '2B', B3 '3B', HR, RBI, 
+	(H-B2-B3-HR)+(B2*2)+(B3*3)+(HR*4) TB, BB, SO, SB, (h * 1.0)/ (Case when AB=0 then 1 else (AB*1.0) end) BA,
+	((H*1.0)+(BB*1.0)+(HBP*1.0))/(Case when AB=0 then 1 else (AB+BB+HBP) end) OBP, 
+	((H-B2-B3-HR)+(B2*2)+(B3*3)+(HR*4))/((Case when AB=0 then 1 else (AB*1.0) end)) SLG,
+	(((H*1.0)+(BB*1.0)+(HBP*1.0))/(Case when AB=0 then 1 else (AB+BB+HBP) end))+
+	(((H-B2-B3-HR)+(B2*2)+(B3*3)+(HR*4))/((Case when AB=0 then 1 else (AB*1.0) end))) OPS
+	from vwPlayersBatting
+	where teamID = 'LAN' and yearID = 2012
+	order by (h * 1.0)/(Case when AB=0 then 1 else (AB*1.0) end) desc
+
+BOTTOM ROW TOTALS:
+
+	SELECT '162' as 'GP', sum(AB) AB, sum(R) R, sum(H) H, sum(B2) '2B', sum(B3) '3B', 
+	sum(HR) HR, sum(RBI) RBI, sum((H-B2-B3-HR)+(B2*2)+(B3*3)+(HR*4)) TB, 
+	sum(BB) BB, sum(SO) SO, sum(SB) SB, (sum(H*1.0))/(sum((AB*1.0))) BA,
+	(sum(((H*1.0)+(BB*1.0)+(HBP*1.0))))/(sum((((AB*1.0)+(BB*1.0)+(HBP*1.0))))) OBP,
+	sum((H-B2-B3-HR)+(B2*2)+(B3*3)+(HR*4))/sum(AB*1.0) SLG,
+	(sum(((H*1.0)+(BB*1.0)+(HBP*1.0))))/(sum((((AB*1.0)+(BB*1.0)+(HBP*1.0)))))+
+	sum((H-B2-B3-HR)+(B2*2)+(B3*3)+(HR*4))/sum(AB*1.0) OPS
+	from vwPlayersBatting
+	where teamID = 'LAN' and yearID = '2012'
+
+TEAM HOME RUN LEADER:
+
+	SELECT (nameFirst+ ' '+ nameLast) 'Team HR Leader', HR
+	from vwPlayersBatting
+	where teamID = 'LAN' and yearID = '2012' and 
+	hr = (select max(hr) 'HR Leader' from vwPlayersBatting 
+	where teamID = 'LAN' and yearID = '2012')
+	group by nameFirst, nameLast, hr
+
+TEAM RBI LEADER:
+
+	SELECT (nameFirst+ ' '+ nameLast) 'Team RBI Leader', RBI
+	from vwPlayersBatting
+	where teamID = 'LAN' and yearID = '2012' and 
+	RBI = (select max(RBI) from vwPlayersBatting 
+	where teamID = 'LAN' and yearID = '2012')
+	group by nameFirst, nameLast, RBI
+
+TEAM HITS LEADER:
+
+	SELECT (nameFirst+ ' '+ nameLast) 'Team Hits Leader', H Hits
+	from vwPlayersBatting
+	where teamID = 'LAN' and yearID = '2012' and 
+	H = (select max(H) from vwPlayersBatting 
+	where teamID = 'LAN' and yearID = '2012')
+	group by nameFirst, nameLast, H
+
+TEAM BA LEADER:
+
+	SELECT (nameFirst+ ' '+ nameLast) 'Team BA Leader', (h * 1.0)/ (Case when AB=0 then 1 else (AB*1.0) end) BA
+	from vwPlayersBatting
+	where teamID = 'LAN' and yearID = '2012' and
+	(h * 1.0)/ (Case when AB=0 then 1 else (AB*1.0) end) = (select max((h * 1.0)/ (Case when AB=0 then 1 else (AB*1.0) end)) from vwPlayersBatting 
+	where teamID = 'LAN' and yearID = '2012' and AB > 500)
+	group by nameFirst, nameLast, (h * 1.0)/ (Case when AB=0 then 1 else (AB*1.0) end)
+
+TEAM OBP LEADER:
+
+	SELECT (nameFirst+ ' '+ nameLast) 'Team OBP Leader', ((H*1.0)+(BB*1.0)+(HBP*1.0))/
+	(Case when AB=0 then 1 else (AB+BB+HBP) end) OBP
+	from vwPlayersBatting
+	where teamID = 'LAN' and yearID = '2012' and 
+	((H*1.0)+(BB*1.0)+(HBP*1.0))/(Case when AB=0 then 1 else (AB+BB+HBP) end)= 
+	(select max(((H*1.0)+(BB*1.0)+(HBP*1.0))/
+	(Case when AB=0 then 1 else (AB+BB+HBP) end)) from vwPlayersBatting 
+	where teamID = 'LAN' and yearID = '2012' and AB > 400)
+	group by nameFirst, nameLast, ((H*1.0)+(BB*1.0)+(HBP*1.0))/
+	(Case when AB=0 then 1 else (AB+BB+HBP) end)
